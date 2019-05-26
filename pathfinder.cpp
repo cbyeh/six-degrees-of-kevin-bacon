@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
     ifstream input;
     ofstream output;
     ActorGraph* actorGraph = new ActorGraph();
+    actorGraph->loadFromFile("pa4_refs/imdb_2019.tsv", false);
     delete actorGraph;
 //    input.open(INFILE, ios_base::binary);
 //    output.open(OUTFILE, ios_base::trunc);
