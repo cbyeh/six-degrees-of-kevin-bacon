@@ -1,10 +1,10 @@
 /**
  * Christopher Yeh
  * cyeh@ucsd.edu
- * Header file representing an ActorEdge.
+ * Implementation of an ActorEdge.
  */
 #include "ActorEdge.hpp"
 
-/** Constructor. Initialize an ActorEdge with a movie title and its year */
-ActorEdge::ActorEdge(string& movieName, unsigned short year) :
-    movieName(movieName), year(year) { }
+/** Constructor. Initialize an ActorEdge with a Movie */
+ActorEdge::ActorEdge(Movie* movie, ActorNode* coStar) :
+    movie(movie), coStar(coStar) { }

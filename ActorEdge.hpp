@@ -3,23 +3,27 @@
  * cyeh@ucsd.edu
  * Header file representing an ActorEdge.
  */
-
 #ifndef ACTOREDGE_HPP
 #define ACTOREDGE_HPP
 
 #include <iostream>
+#include "Movie.hpp"
+class ActorNode;
 
 using namespace std;
 
+/** Defines an edge for an ActorEdge.
+ * Defined by a movie, co-star,  */
 class ActorEdge {
 
-private:
+public:
 
-    string movieName;
-    unsigned short year;
+    ActorNode* coStar;
+    Movie* movie;
+    int weight;
 
-    /** Constructor. Initialize an ActorEdge with a movie title and its year */
-    ActorEdge(string& movieName, unsigned short year);
+    /** Constructor. Initialize an ActorEdge with a Movie */
+    explicit ActorEdge(Movie* movie, ActorNode* coStar);
 
 };
 

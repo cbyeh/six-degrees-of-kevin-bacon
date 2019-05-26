@@ -6,18 +6,11 @@
  * This file is meant to exist as a container for starter code that you can use to read the input file format
  * defined in imdb_2019.tsv. Feel free to modify any/all aspects as you wish.
  */
- 
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
 #include "ActorGraph.hpp"
-
-using namespace std;
+#include "Movie.hpp"
 
 /** Constructor of the Actor Graph. */
-ActorGraph::ActorGraph(void) { }
+ActorGraph::ActorGraph() { }
 
 /**
  * Load the graph from a tab-delimited file of actor->movie relationships.
@@ -40,13 +33,13 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
             have_header = true;
             continue;
         }
-        istringstream ss( s );
-        vector <string> record;
+        istringstream ss(s);
+        vector<string> record;
         while (ss) {
             string next;
             // Get the next string before hitting a tab character and put it in 'next'
-            if (!getline( ss, next, '\t' )) break;
-            record.push_back( next );
+            if (!getline(ss, next, '\t')) break;
+            record.push_back(next);
         }
         if (record.size() != 3) {
             // We should have exactly 3 columns
@@ -54,13 +47,58 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         }
         string actor_name(record[0]);
         string movie_title(record[1]);
-        int movie_year = stoi(record[2]);
-        // TODO: we have an actor/movie relationship, now what?
+        string movie_year(record[2]);
+        int year = stoi(movie_year);
+        // Create actor if not iterated yet
+        if (actors.find(actor_name) == actors.end()) {
+            auto newNode = new ActorNode(actor_name);
+            actors.insert({actor_name, newNode});
+        }
+        // Create movie if not iterated yet
+        string movieHash = movie_title + movie_year;
+        if (movies.find(movieHash) == movies.end()) {
+            Movie* movie = new Movie(movie_title, year);
+            movies.insert({movieHash, movie});
+        }
+        if (actorsInMovie.find(movieHash) == actorsInMovie.end()) {
+            vector<ActorNode*> newVector;
+            actorsInMovie.insert({movieHash, newVector});
+        }
+        // Create connections
+        ActorNode* thisActor = actors[actor_name];
+        Movie* movie = movies[movieHash];
+        vector<ActorNode*> stars = actorsInMovie[movieHash];
+        for (ActorNode* star : stars) {
+            ActorEdge* edgeFrom = new ActorEdge(movie, thisActor);
+            star->relationships.push_back(edgeFrom);
+            ActorEdge* edgeTo = new ActorEdge(movie, star);
+            actors[actor_name]->relationships.push_back(edgeTo);
+        }
+        stars.push_back(actors[actor_name]);
     }
+    // Finish
     if (!infile.eof()) {
         cerr << "Failed to read " << in_filename << "!\n";
         return false;
     }
+    for (auto& actor : actors) {
+        for (ActorEdge* edges : actor.second->relationships) {
+            cout << edges << endl;
+        }
+    }
     infile.close();
     return true;
+}
+
+/** Destructor of the Actor Graph.*/
+ActorGraph::~ActorGraph() {
+    for (auto& movie : movies) {
+        delete movie.second; // Delete movie object
+    }
+    for (auto& actor : actors) {
+        for (ActorEdge* edges : actor.second->relationships) {
+            delete edges;
+        }
+        delete actor.second; // Delete actor object
+    }
 }
