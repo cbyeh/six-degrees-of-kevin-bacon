@@ -36,7 +36,7 @@ public:
     /** Constructor of the Actor Graph. */
     ActorGraph();
 
-    /** Destructor of the Actor Graph.*/
+    /** Destructor of the Actor Graph. */
     ~ActorGraph();
 
     // Maybe add some more methods here

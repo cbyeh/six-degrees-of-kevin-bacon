@@ -7,4 +7,8 @@
 #include "ActorNode.hpp"
 
 /** Constructor. Initialize an ActorNode with empty edges and actor name */
-ActorNode::ActorNode(string& actorName) : actorName(actorName) { }
+ActorNode::ActorNode(string& actorName) : actorName(actorName) {
+    distance = 0;
+    prevActor = nullptr;
+    prevMovie = nullptr;
+}

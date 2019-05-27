@@ -13,7 +13,7 @@ class ActorNode;
 using namespace std;
 
 /** Defines an edge for an ActorEdge.
- * Defined by a movie, co-star,  */
+ * Defined by a common movie, co-star, and its weight relative to year released */
 class ActorEdge {
 
 public:

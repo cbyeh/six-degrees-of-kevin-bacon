@@ -8,6 +8,8 @@
  */
 #include <iostream>
 #include <fstream>
+#include <climits>
+#include <queue>
 #include "ActorGraph.hpp"
 
 using namespace std;
@@ -19,21 +21,121 @@ using namespace std;
  */
 int main(int argc, char** argv) {
     // Check for appropriate arguments. Does not account for invalid files.
-    const int NUM_ARGS = 4;
-    /*if (argc != NUM_ARGS) {
+    const int NUM_ARGS = 5;
+    if (argc != NUM_ARGS) {
         cout << "Usage: ./pathfinder movie_cast_tsv_file "
                 "u/w pairs_tsv_file /output_paths_tsv_file" << endl;
         return EXIT_FAILURE;
-    }*/
-    /* const string BAD_URLS = argv[1];
-    const string URLS = argv[2];
-    const string OUTPUT_FILE = argv[3]; */
-    // Error "checking" done. Proceed with program.
-    ifstream input;
-    ofstream output;
+    }
+    string IMDB_FILE = argv[1];
+    const string IS_WEIGHTED = argv[2];
+    const string PAIRS_FILE = argv[3];
+    const string OUTPUT_FILE = argv[4];
+    // Error "checking" done. Proceed with program
+    bool isWeighted;
+    if (IS_WEIGHTED == "u") {
+        isWeighted = false;
+    } else {
+        isWeighted = true;
+    }
+    // Generate the graph
+    const char* IMDB = IMDB_FILE.c_str();
     ActorGraph* actorGraph = new ActorGraph();
-    actorGraph->loadFromFile("pa4_refs/imdb_2019.tsv", false);
+    actorGraph->loadFromFile(IMDB, isWeighted);
+    ifstream infile(PAIRS_FILE);
+    ofstream outfile(OUTPUT_FILE);
+    // Add pairs to queue, write header
+    bool have_header = false;
+    outfile << "(actor)--[movie#@year]-->(actor)--..." << endl;
+    // Keep reading lines until the end of file is reached
+    while (infile) {
+        string s;
+        // Get the next line
+        if (!getline(infile, s)) break;
+        if (!have_header) {
+            // Skip the header
+            have_header = true;
+            continue;
+        }
+        istringstream ss(s);
+        vector<string> record;
+        while (ss) {
+            string next;
+            // Get the next string delimited by tab and put it in 'next'
+            if (!getline(ss, next, '\t')) break;
+            record.push_back(next);
+        }
+        if (record.size() != 2) {
+            // We should have exactly 3 columns
+            continue;
+        }
+        string actorOneStr(record[0]);
+        string actorTwoStr(record[1]);
+        // Setup for BFS, initialize pair and set distances of all to INF
+        cout << "Computing path for (" << actorOneStr << ") -> ("
+            << actorTwoStr << ")" << endl;
+        if (actorGraph->actors.find(actorOneStr) == actorGraph->actors.end()) {
+            outfile << "Actor(s) do not exist in file" << endl;
+            continue;
+        }
+        if (actorGraph->actors.find(actorTwoStr) == actorGraph->actors.end()) {
+            outfile << "Actor(s) do not exist in file" << endl;
+            continue;
+        }
+        ActorNode* actorOne = actorGraph->actors[actorOneStr];
+        ActorNode* actorTwo = actorGraph->actors[actorTwoStr];
+        for (auto actor : actorGraph->actors) {
+            if (actor.second != nullptr) {
+                actor.second->distance = INT_MAX;
+            }
+        }
+        // Begin BFS
+        queue<ActorNode*> toExplore;
+        actorOne->distance = 0;
+        toExplore.push(actorOne);
+        bool foundPath = false;
+        while (!toExplore.empty()) {
+            ActorNode* curr = toExplore.front();
+            toExplore.pop();
+            if (curr == actorTwo) {
+                foundPath = true;
+                break;
+            }
+            for (ActorEdge* edge : curr->relationships) {
+                if (edge->coStar->distance == INT_MAX) {
+                    edge->coStar->distance = curr->distance + 1;
+                    edge->coStar->prevActor = curr;
+                    edge->coStar->prevMovie = edge->movie;
+                    toExplore.push(edge->coStar);
+                }
+            }
+        }
+        // Print our shortest path and print it to outfile.
+        if (!foundPath) {
+            outfile << "No path found" << endl;
+        } else {
+            ActorNode* curr = actorTwo;
+            vector<string> toPrint;
+            while (curr != nullptr) {
+                if (curr != actorOne) {
+                    toPrint.push_back("]-->(" + curr->actorName + ")");
+                    toPrint.push_back("#@" + curr->prevMovie->year); // TODO:
+                    toPrint.push_back("--[" + curr->prevMovie->movieName);
+                } else {
+                    toPrint.push_back("(" + actorOneStr + ")");
+                    break;
+                }
+                curr = curr->prevActor;
+            }
+            for (vector<string>::reverse_iterator it =
+                    toPrint.rbegin(); it != toPrint.rend(); it++)
+            {
+                outfile << *it;
+            }
+            outfile << endl;
+        }
+    }
+    infile.close();
+    outfile.close();
     delete actorGraph;
-//    input.open(INFILE, ios_base::binary);
-//    output.open(OUTFILE, ios_base::trunc);
 }

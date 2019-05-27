@@ -20,6 +20,9 @@ public:
 
     vector<ActorEdge*> relationships;
     string actorName;
+    unsigned int distance; // Distance from query node
+    ActorNode* prevActor;
+    Movie* prevMovie;
 
     /** Constructor. Initialize an ActorNode with empty edges and actor name */
     explicit ActorNode(string& actorName);

@@ -19,11 +19,14 @@ ActorGraph::ActorGraph() { }
  *  1 + (2019 - movie_year), otherwise all edge weights will be 1
  * Return true if file was loaded successfully, false otherwise
  */
-bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) {
+bool ActorGraph::loadFromFile(const char* in_filename,
+        bool use_weighted_edges)
+{
     // Initialize the file stream
     ifstream infile(in_filename);
     bool have_header = false;
     // Keep reading lines until the end of file is reached
+    cout << "Reading " << in_filename << " ..." << endl;
     while (infile) {
         string s;
         // Get the next line
@@ -37,7 +40,7 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         vector<string> record;
         while (ss) {
             string next;
-            // Get the next string before hitting a tab character and put it in 'next'
+            // Get the next string delimited by tab and put it in 'next'
             if (!getline(ss, next, '\t')) break;
             record.push_back(next);
         }
@@ -59,45 +62,51 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         if (movies.find(movieHash) == movies.end()) {
             Movie* movie = new Movie(movie_title, year);
             movies.insert({movieHash, movie});
-        }
-        if (actorsInMovie.find(movieHash) == actorsInMovie.end()) {
             vector<ActorNode*> newVector;
             actorsInMovie.insert({movieHash, newVector});
         }
         // Create connections
-        ActorNode* thisActor = actors[actor_name];
+        ActorNode* currActor = actors[actor_name];
         Movie* movie = movies[movieHash];
-        vector<ActorNode*> stars = actorsInMovie[movieHash];
+        vector<ActorNode*>& stars = actorsInMovie[movieHash];
         for (ActorNode* star : stars) {
-            ActorEdge* edgeFrom = new ActorEdge(movie, thisActor);
+            ActorEdge* edgeFrom = new ActorEdge(movie, currActor);
             star->relationships.push_back(edgeFrom);
             ActorEdge* edgeTo = new ActorEdge(movie, star);
             actors[actor_name]->relationships.push_back(edgeTo);
         }
-        stars.push_back(actors[actor_name]);
+        stars.push_back(currActor);
+//        cout << movie_title << endl;
+//        for (ActorNode* star : stars) {
+//            cout << star->actorName << endl;
+//        }
     }
     // Finish
     if (!infile.eof()) {
         cerr << "Failed to read " << in_filename << "!\n";
         return false;
     }
-    for (auto& actor : actors) {
-        for (ActorEdge* edges : actor.second->relationships) {
-            cout << edges << endl;
-        }
-    }
+//    for (auto& actor : actors) {
+//        for (ActorEdge* edges : actor.second->relationships) {
+//            cout << edges << endl;
+//        }
+//    }
+//    cout << actors.size() << endl;
+//    cout << movies.size() << endl;
+//    cout << actorsInMovie.size() << endl;
+    cout << "done" << endl;
     infile.close();
     return true;
 }
 
-/** Destructor of the Actor Graph.*/
+/** Destructor of the Actor Graph. */
 ActorGraph::~ActorGraph() {
     for (auto& movie : movies) {
         delete movie.second; // Delete movie object
     }
     for (auto& actor : actors) {
-        for (ActorEdge* edges : actor.second->relationships) {
-            delete edges;
+        for (ActorEdge* edge : actor.second->relationships) {
+            delete edge;
         }
         delete actor.second; // Delete actor object
     }
