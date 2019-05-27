@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     actorGraph->loadFromFile(IMDB, isWeighted);
     ifstream infile(PAIRS_FILE);
     ofstream outfile(OUTPUT_FILE);
-    // Add pairs to queue, write header
+    // Add pairs to queue, write formatting header
     bool have_header = false;
     outfile << "(actor)--[movie#@year]-->(actor)--..." << endl;
     // Keep reading lines until the end of file is reached
@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
             while (curr != nullptr) {
                 if (curr != actorOne) {
                     toPrint.push_back("]-->(" + curr->actorName + ")");
-                    toPrint.push_back("#@" + curr->prevMovie->year); // TODO:
+                    toPrint.push_back("#@" + to_string(curr->prevMovie->year));
                     toPrint.push_back("--[" + curr->prevMovie->movieName);
                 } else {
                     toPrint.push_back("(" + actorOneStr + ")");
