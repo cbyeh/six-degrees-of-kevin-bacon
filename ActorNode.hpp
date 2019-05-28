@@ -21,11 +21,23 @@ public:
     vector<ActorEdge*> relationships;
     string actorName;
     unsigned int distance; // Distance from query node
+    bool isDone;
     ActorNode* prevActor;
     Movie* prevMovie;
 
     /** Constructor. Initialize an ActorNode with empty edges and actor name */
     explicit ActorNode(string& actorName);
+
+    /** Comparator for the priority queue in pathfinder */
+    struct CompareDistance {
+        bool operator() (ActorNode*& n1, ActorNode*& n2) {
+            if (n1->distance == n2->distance) {
+                return n1->actorName > n2->actorName;
+            } else {
+                return n1->distance > n2->distance;
+            }
+        }
+    };
 
 };
 

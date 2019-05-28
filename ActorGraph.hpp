@@ -27,6 +27,10 @@ using namespace std;
  */
 class ActorGraph {
 
+private:
+
+    const short CURR_YEAR = 2019;
+
 public:
 
     unordered_map<string, ActorNode*> actors;

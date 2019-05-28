@@ -22,8 +22,11 @@ public:
     Movie* movie;
     int weight;
 
-    /** Constructor. Initialize an ActorEdge with a Movie */
+    /** Constructor. Initialize an ActorEdge with a Movie and co-star */
     explicit ActorEdge(Movie* movie, ActorNode* coStar);
+
+    /** Constructor. Initialize an ActorEdge with a Movie, co-star, and weight */
+    explicit ActorEdge(Movie* movie, ActorNode* coStar, int weight);
 
 };
 

@@ -7,7 +7,6 @@
  * defined in imdb_2019.tsv. Feel free to modify any/all aspects as you wish.
  */
 #include "ActorGraph.hpp"
-#include "Movie.hpp"
 
 /** Constructor of the Actor Graph. */
 ActorGraph::ActorGraph() { }
@@ -51,7 +50,7 @@ bool ActorGraph::loadFromFile(const char* in_filename,
         string actor_name(record[0]);
         string movie_title(record[1]);
         string movie_year(record[2]);
-        int year = stoi(movie_year);
+        short year = stoi(movie_year);
         // Create actor if not iterated yet
         if (actors.find(actor_name) == actors.end()) {
             auto newNode = new ActorNode(actor_name);
@@ -69,31 +68,28 @@ bool ActorGraph::loadFromFile(const char* in_filename,
         ActorNode* currActor = actors[actor_name];
         Movie* movie = movies[movieHash];
         vector<ActorNode*>& stars = actorsInMovie[movieHash];
+        int weight;
         for (ActorNode* star : stars) {
-            ActorEdge* edgeFrom = new ActorEdge(movie, currActor);
+            ActorEdge* edgeFrom;
+            ActorEdge* edgeTo;
+            if (use_weighted_edges) {
+                weight = CURR_YEAR - year + 1;
+                edgeFrom = new ActorEdge(movie, currActor, weight);
+                edgeTo = new ActorEdge(movie, star, weight);
+            } else {
+                edgeFrom = new ActorEdge(movie, currActor, 1);
+                edgeTo = new ActorEdge(movie, star, 1);
+            }
             star->relationships.push_back(edgeFrom);
-            ActorEdge* edgeTo = new ActorEdge(movie, star);
             actors[actor_name]->relationships.push_back(edgeTo);
         }
         stars.push_back(currActor);
-//        cout << movie_title << endl;
-//        for (ActorNode* star : stars) {
-//            cout << star->actorName << endl;
-//        }
     }
     // Finish
     if (!infile.eof()) {
         cerr << "Failed to read " << in_filename << "!\n";
         return false;
     }
-//    for (auto& actor : actors) {
-//        for (ActorEdge* edges : actor.second->relationships) {
-//            cout << edges << endl;
-//        }
-//    }
-//    cout << actors.size() << endl;
-//    cout << movies.size() << endl;
-//    cout << actorsInMovie.size() << endl;
     cout << "done" << endl;
     infile.close();
     return true;

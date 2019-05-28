@@ -21,10 +21,11 @@ using namespace std;
  */
 int main(int argc, char** argv) {
     // Check for appropriate arguments. Does not account for invalid files.
+    const string INSTRUCTS = "Usage: ./pathfinder movie_cast_tsv_file "
+                             "u/w pairs_tsv_file /output_paths_tsv_file";
     const int NUM_ARGS = 5;
     if (argc != NUM_ARGS) {
-        cout << "Usage: ./pathfinder movie_cast_tsv_file "
-                "u/w pairs_tsv_file /output_paths_tsv_file" << endl;
+        cout << INSTRUCTS << endl;
         return EXIT_FAILURE;
     }
     string IMDB_FILE = argv[1];
@@ -35,8 +36,11 @@ int main(int argc, char** argv) {
     bool isWeighted;
     if (IS_WEIGHTED == "u") {
         isWeighted = false;
-    } else {
+    } else if (IS_WEIGHTED == "w"){
         isWeighted = true;
+    } else {
+        cout << INSTRUCTS << endl;
+        return EXIT_FAILURE;
     }
     // Generate the graph
     const char* IMDB = IMDB_FILE.c_str();
@@ -66,7 +70,7 @@ int main(int argc, char** argv) {
             record.push_back(next);
         }
         if (record.size() != 2) {
-            // We should have exactly 3 columns
+            // We should have exactly 2 columns
             continue;
         }
         string actorOneStr(record[0]);
@@ -87,26 +91,32 @@ int main(int argc, char** argv) {
         for (auto actor : actorGraph->actors) {
             if (actor.second != nullptr) {
                 actor.second->distance = INT_MAX;
+                actor.second->isDone = false;
             }
         }
         // Begin BFS
-        queue<ActorNode*> toExplore;
+        priority_queue<ActorNode*, vector<ActorNode*>,
+                ActorNode::CompareDistance> toExplore;
         actorOne->distance = 0;
         toExplore.push(actorOne);
         bool foundPath = false;
         while (!toExplore.empty()) {
-            ActorNode* curr = toExplore.front();
+            ActorNode* curr = toExplore.top();
             toExplore.pop();
             if (curr == actorTwo) {
                 foundPath = true;
                 break;
             }
-            for (ActorEdge* edge : curr->relationships) {
-                if (edge->coStar->distance == INT_MAX) {
-                    edge->coStar->distance = curr->distance + 1;
-                    edge->coStar->prevActor = curr;
-                    edge->coStar->prevMovie = edge->movie;
-                    toExplore.push(edge->coStar);
+            if (!curr->isDone) {
+                curr->isDone = true;
+                for (ActorEdge* edge : curr->relationships) {
+                    unsigned int distFrom = curr->distance + edge->weight;
+                    if (distFrom < edge->coStar->distance) {
+                        edge->coStar->distance = distFrom;
+                        edge->coStar->prevActor = curr;
+                        edge->coStar->prevMovie = edge->movie;
+                        toExplore.push(edge->coStar);
+                    }
                 }
             }
         }
@@ -116,20 +126,14 @@ int main(int argc, char** argv) {
         } else {
             ActorNode* curr = actorTwo;
             vector<string> toPrint;
-            while (curr != nullptr) {
-                if (curr != actorOne) {
-                    toPrint.push_back("]-->(" + curr->actorName + ")");
-                    toPrint.push_back("#@" + to_string(curr->prevMovie->year));
-                    toPrint.push_back("--[" + curr->prevMovie->movieName);
-                } else {
-                    toPrint.push_back("(" + actorOneStr + ")");
-                    break;
-                }
+            while (curr != actorOne) {
+                toPrint.push_back("]-->(" + curr->actorName + ")");
+                toPrint.push_back("#@" + to_string(curr->prevMovie->year));
+                toPrint.push_back("--[" + curr->prevMovie->movieName);
                 curr = curr->prevActor;
             }
-            for (vector<string>::reverse_iterator it =
-                    toPrint.rbegin(); it != toPrint.rend(); it++)
-            {
+            toPrint.push_back("(" + actorOneStr + ")");
+            for (auto it = toPrint.rbegin(); it != toPrint.rend(); it++) {
                 outfile << *it;
             }
             outfile << endl;
