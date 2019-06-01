@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
         cout << INSTRUCTS << endl;
         return EXIT_FAILURE;
     }
-    string IMDB_FILE = argv[1];
+    const string IMDB_FILE = argv[1];
     const string IS_WEIGHTED = argv[2];
     const string PAIRS_FILE = argv[3];
     const string OUTPUT_FILE = argv[4];
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
         }
         ActorNode* actorOne = actorGraph->actors[actorOneStr];
         ActorNode* actorTwo = actorGraph->actors[actorTwoStr];
-        for (auto actor : actorGraph->actors) {
+        for (auto& actor : actorGraph->actors) {
             if (actor.second != nullptr) {
                 actor.second->distance = INT_MAX;
                 actor.second->isDone = false;
@@ -100,6 +100,7 @@ int main(int argc, char** argv) {
         actorOne->distance = 0;
         toExplore.push(actorOne);
         bool foundPath = false;
+        ActorNode* coStar;
         while (!toExplore.empty()) {
             ActorNode* curr = toExplore.top();
             toExplore.pop();
@@ -109,13 +110,20 @@ int main(int argc, char** argv) {
             }
             if (!curr->isDone) {
                 curr->isDone = true;
-                for (ActorEdge* edge : curr->relationships) {
-                    unsigned int distFrom = curr->distance + edge->weight;
-                    if (distFrom < edge->coStar->distance) {
-                        edge->coStar->distance = distFrom;
-                        edge->coStar->prevActor = curr;
-                        edge->coStar->prevMovie = edge->movie;
-                        toExplore.push(edge->coStar);
+                for (ActorEdge edge : curr->relationships) {
+                    unsigned int distFrom = curr->distance + edge.weight;
+                    // Find other co-star
+                    if (edge.coStar1 == curr) {
+                        coStar = edge.coStar2;
+                    } else {
+                        coStar = edge.coStar1;
+                    }
+
+                    if (distFrom < coStar->distance) {
+                        coStar->distance = distFrom;
+                        coStar->prevActor = curr;
+                        coStar->prevMovie = edge.movie;
+                        toExplore.push(coStar);
                     }
                 }
             }

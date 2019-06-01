@@ -1,10 +1,10 @@
-/*
- * ActorGraph.cpp
- * Author: <YOUR NAME HERE>
- * Date:   <DATE HERE>
- *
- * This file is meant to exist as a container for starter code that you can use to read the input file format
- * defined in imdb_2019.tsv. Feel free to modify any/all aspects as you wish.
+/**
+ * Christopher Yeh
+ * cyeh@ucsd.edu
+ * A main driver to test run the firewall.
+ * The firewall works by first parsing known malicious links,
+ * Then parsing a second file with links, outputting definitely
+ * fine links to an output file. It sacrifices accuracy for space complexity.
  */
 #include "ActorGraph.hpp"
 
@@ -61,27 +61,23 @@ bool ActorGraph::loadFromFile(const char* in_filename,
         if (movies.find(movieHash) == movies.end()) {
             Movie* movie = new Movie(movie_title, year);
             movies.insert({movieHash, movie});
-            vector<ActorNode*> newVector;
-            actorsInMovie.insert({movieHash, newVector});
         }
         // Create connections
         ActorNode* currActor = actors[actor_name];
         Movie* movie = movies[movieHash];
-        vector<ActorNode*>& stars = actorsInMovie[movieHash];
+        vector<ActorNode*>& stars = movies[movieHash]->actorsInMovie;
         int weight;
         for (ActorNode* star : stars) {
-            ActorEdge* edgeFrom;
-            ActorEdge* edgeTo;
             if (use_weighted_edges) {
                 weight = CURR_YEAR - year + 1;
-                edgeFrom = new ActorEdge(movie, currActor, weight);
-                edgeTo = new ActorEdge(movie, star, weight);
+                ActorEdge newEdge = ActorEdge(movie, currActor, star, weight);
+                star->relationships.push_back(newEdge);
+                actors[actor_name]->relationships.push_back(newEdge);
             } else {
-                edgeFrom = new ActorEdge(movie, currActor, 1);
-                edgeTo = new ActorEdge(movie, star, 1);
+                ActorEdge newEdge = ActorEdge(movie, currActor, star); // Weight is 1
+                star->relationships.push_back(newEdge);
+                actors[actor_name]->relationships.push_back(newEdge);
             }
-            star->relationships.push_back(edgeFrom);
-            actors[actor_name]->relationships.push_back(edgeTo);
         }
         stars.push_back(currActor);
     }
@@ -100,10 +96,9 @@ ActorGraph::~ActorGraph() {
     for (auto& movie : movies) {
         delete movie.second; // Delete movie object
     }
+    unordered_map<string, ActorEdge*> edges;
+    string hash;
     for (auto& actor : actors) {
-        for (ActorEdge* edge : actor.second->relationships) {
-            delete edge;
-        }
         delete actor.second; // Delete actor object
     }
 }

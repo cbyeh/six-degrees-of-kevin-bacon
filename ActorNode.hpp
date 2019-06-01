@@ -18,7 +18,7 @@ class ActorNode {
 
 public:
 
-    vector<ActorEdge*> relationships;
+    vector<ActorEdge> relationships;
     string actorName;
     unsigned int distance; // Distance from query node
     bool isDone;

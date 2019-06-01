@@ -1,10 +1,10 @@
-/*
- * ActorGraph.hpp
- * Author: <YOUR NAME HERE>
- * Date:   <DATE HERE>
- *
- * This file is meant to exist as a container for starter code that you can use to read the input file format
- * defined imdb_2019.tsv. Feel free to modify any/all aspects as you wish.
+/**
+ * Christopher Yeh
+ * cyeh@ucsd.edu
+ * A main driver to test run the firewall.
+ * The firewall works by first parsing known malicious links,
+ * Then parsing a second file with links, outputting definitely
+ * fine links to an output file. It sacrifices accuracy for space complexity.
  */
 #ifndef ACTORGRAPH_HPP
 #define ACTORGRAPH_HPP
@@ -22,8 +22,10 @@
 
 using namespace std;
 
-/**
- * TODO: add class header
+/** Defines a Graph for our actors and their relationships by movie..
+ * Defined by a lists of unique actors, movies, and stars of the movies.
+ * actors:
+ * movies:
  */
 class ActorGraph {
 
@@ -35,15 +37,12 @@ public:
 
     unordered_map<string, ActorNode*> actors;
     unordered_map<string, Movie*> movies;
-    unordered_map<string, vector<ActorNode*>> actorsInMovie;
 
     /** Constructor of the Actor Graph. */
     ActorGraph();
 
     /** Destructor of the Actor Graph. */
     ~ActorGraph();
-
-    // Maybe add some more methods here
 
     /**
     * Load the graph from a tab-delimited file of actor->movie relationships.
