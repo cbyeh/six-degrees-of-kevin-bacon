@@ -24,6 +24,7 @@ public:
     bool isDone;
     ActorNode* prevActor;
     Movie* prevMovie;
+    ActorNode* parent; // Its parent for Disjoint Set
 
     /** Constructor. Initialize an ActorNode with empty edges and actor name */
     explicit ActorNode(string& actorName);

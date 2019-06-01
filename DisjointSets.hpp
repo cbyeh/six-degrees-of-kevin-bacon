@@ -9,7 +9,7 @@
 #include <iostream>
 #include <set>
 #include <unordered_map>
-#include "ActorNode.hpp"
+#include "ActorGraph.hpp"
 
 using namespace std;
 
@@ -22,18 +22,17 @@ class DisjointSets {
 
 public:
 
-    int* array;
-
-    unordered_map<string, UpTree> disjointSet;
+    vector<ActorNode*> array;
+    ActorGraph* actorGraph;
 
     /** Constructor of the Actor Graph. */
-    DisjointSets(int numActors);
+    DisjointSets(int numActors, ActorGraph* actorGraph);
 
     /** Finds the set a node is in, by root of its UpTree */
     ActorNode* find(ActorNode* toFind);
 
     /** Unions two sets */
-    void unify(ActorNode* root1, ActorNode* root2);
+    void unify(ActorNode* node1, ActorNode* node2);
 
 };
 

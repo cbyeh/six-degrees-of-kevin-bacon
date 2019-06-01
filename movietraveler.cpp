@@ -12,6 +12,7 @@
 #include <queue>
 #include <algorithm>
 #include "ActorGraph.hpp"
+#include "DisjointSets.hpp"
 
 using namespace std;
 
@@ -42,45 +43,31 @@ int main(int argc, char** argv) {
     bool have_header = false;
     outfile << "(actor)<--[movie#@year]-->(actor)" << endl;
     // Keep reading lines until the end of file is reached
-    cout << numActors << endl;
-//    while (infile) {
-//        string s;
-//        // Get the next line
-//        if (!getline(infile, s)) break;
-//        if (!have_header) {
-//            // Skip the header
-//            have_header = true;
-//            continue;
-//        }
-//        istringstream ss(s);
-//        vector<string> record;
-//        while (ss) {
-//            string next;
-//            // Get the next string delimited by tab and put it in 'next'
-//            if (!getline(ss, next, '\t')) break;
-//            record.push_back(next);
-//        }
-//        if (record.size() != 3) {
-//            // We should have exactly 3 columns
-//            continue;
-//        }
-//        string actor_name(record[0]);
-//        string movie_title(record[1]);
-//        string movie_year(record[2]);
-//        short year = stoi(movie_year);
-//        // Sort edges for MST
-//        vector<ActorEdge*> sortedEdges =
-//                actorGraph->actors[actor_name]->relationships;
-//        sort(sortedEdges.begin(), sortedEdges.end(),
-//                ActorEdge::CompareWeight());
-//        cout << "Movie: " + movie_title << endl;
-//        for (auto& i : sortedEdges) {
-//            cout << i->movie->year << endl;
-//        }
-    vector<ActorEdge> edges;
-    for (auto& actor : actorGraph->actors) {
-
+    vector<ActorEdge>& edges = actorGraph->edges;
+    sort(edges.begin(), edges.end(), ActorEdge::CompareWeight());
+    DisjointSets sets = DisjointSets(numActors, actorGraph);
+    // Begin Kruskal's algorithm
+    int edgesChosen = 0, edgeWeights = 0;
+    for (ActorEdge& edge : edges) {
+        // If no cycle, connect the actors.
+        ActorNode* find1 = sets.find(edge.coStar1);
+        ActorNode* find2 = sets.find(edge.coStar2);
+        if (find1 != find2) {
+            sets.unify(edge.coStar1, edge.coStar2);
+            outfile << "(" << edge.coStar1->actorName << ")<--[" <<
+            edge.movie->movieName << "#@" << edge.movie->year <<
+            "]-->(" << edge.coStar2->actorName << ")" << endl;
+            // if (find1 != edge.coStar1)
+            edgesChosen++;
+            edgeWeights += edge.weight;
+        }
+        if (edgesChosen == numActors - 1) {
+            break;
+        }
     }
+    outfile << "#NODE CONNECTED: " << numActors << endl <<
+    "#EDGE CHOSEN: " << edgesChosen << endl <<
+    "TOTAL EDGE WEIGHTS: " << edgeWeights << endl;
     infile.close();
     outfile.close();
     delete actorGraph;

@@ -37,6 +37,7 @@ public:
 
     unordered_map<string, ActorNode*> actors;
     unordered_map<string, Movie*> movies;
+    vector<ActorEdge> edges;
 
     /** Constructor of the Actor Graph. */
     ActorGraph();

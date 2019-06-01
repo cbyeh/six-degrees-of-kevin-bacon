@@ -71,10 +71,13 @@ bool ActorGraph::loadFromFile(const char* in_filename,
             if (use_weighted_edges) {
                 weight = CURR_YEAR - year + 1;
                 ActorEdge newEdge = ActorEdge(movie, currActor, star, weight);
+                edges.push_back(newEdge);
                 star->relationships.push_back(newEdge);
                 actors[actor_name]->relationships.push_back(newEdge);
             } else {
-                ActorEdge newEdge = ActorEdge(movie, currActor, star); // Weight is 1
+                // Weight is 1
+                ActorEdge newEdge = ActorEdge(movie, currActor, star);
+                edges.push_back(newEdge);
                 star->relationships.push_back(newEdge);
                 actors[actor_name]->relationships.push_back(newEdge);
             }
