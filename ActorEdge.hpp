@@ -32,7 +32,7 @@ public:
 
     /** Comparator for the sorting by release year in movietraveler */
     struct CompareWeight {
-        bool operator() (ActorEdge& n1, ActorEdge& n2) {
+        bool operator() (const ActorEdge& n1, const ActorEdge& n2) {
             if (n1.weight == n2.weight) {
                 return n1.movie->movieName < n2.movie->movieName;
             } else {

@@ -29,7 +29,7 @@ public:
     DisjointSets(int numActors, ActorGraph* actorGraph);
 
     /** Finds the set a node is in, by root of its UpTree */
-    ActorNode* find(ActorNode* toFind);
+    ActorNode* find(ActorNode* toFind) const;
 
     /** Unions two sets */
     void unify(ActorNode* node1, ActorNode* node2);

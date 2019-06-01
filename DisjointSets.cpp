@@ -15,7 +15,7 @@ DisjointSets::DisjointSets(int numActors, ActorGraph* actorGraph) {
 }
 
 /** Finds the set a node is in, by root of its UpTree */
-ActorNode* DisjointSets::find(ActorNode* toFind) {
+ActorNode* DisjointSets::find(ActorNode* toFind) const {
     ActorNode* root = toFind;
     while (root->parent != nullptr) {
         root = root->parent;
