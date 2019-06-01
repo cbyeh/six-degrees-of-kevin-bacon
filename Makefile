@@ -1,4 +1,4 @@
-# A simple makefile for CSE 100 PA4
+# A simple makefile
 
 CC=g++
 CXXFLAGS=-std=c++11
@@ -14,9 +14,13 @@ else
     LDFLAGS += -g
 endif
 
-all: pathfinder
+all: pathfinder movietraveler
 
 pathfinder: Movie.o ActorGraph.o ActorNode.o ActorEdge.o
+
+movietraveler: Movie.o ActorGraph.o ActorNode.o ActorEdge.o DisjointSets.o
+
+DisjointSets.o: DisjointSets.hpp ActorNode.hpp
 
 ActorGraph.o: Movie.hpp ActorGraph.hpp ActorNode.hpp ActorEdge.hpp
 
