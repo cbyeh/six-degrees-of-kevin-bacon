@@ -20,7 +20,7 @@ pathfinder: Movie.o ActorGraph.o ActorNode.o ActorEdge.o
 
 movietraveler: Movie.o ActorGraph.o ActorNode.o ActorEdge.o DisjointSets.o
 
-DisjointSets.o: DisjointSets.hpp ActorNode.hpp
+DisjointSets.o: DisjointSets.hpp ActorGraph.hpp
 
 ActorGraph.o: Movie.hpp ActorGraph.hpp ActorNode.hpp ActorEdge.hpp
 
