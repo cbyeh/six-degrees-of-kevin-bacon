@@ -1,10 +1,8 @@
 /**
  * Christopher Yeh
  * cyeh@ucsd.edu
- * A main driver to test run the firewall.
- * The firewall works by first parsing known malicious links,
- * Then parsing a second file with links, outputting definitely
- * fine links to an output file. It sacrifices accuracy for space complexity.
+ * Implementation of an ActorGraph.
+ * loadFromFile() will load from a tsv.
  */
 #include "ActorGraph.hpp"
 
@@ -99,7 +97,6 @@ ActorGraph::~ActorGraph() {
     for (auto& movie : movies) {
         delete movie.second; // Delete movie object
     }
-    unordered_map<string, ActorEdge*> edges;
     string hash;
     for (auto& actor : actors) {
         delete actor.second; // Delete actor object

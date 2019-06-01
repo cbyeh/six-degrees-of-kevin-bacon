@@ -20,7 +20,7 @@ public:
 
     string movieName;
     int year;
-    vector<ActorNode*> actorsInMovie;
+    vector<ActorNode*> actorsInMovie; // Actors that star in the movie
 
     /** Constructor. Initialize a Movie with a movie title and its year */
     Movie(string& movieName, unsigned short year);

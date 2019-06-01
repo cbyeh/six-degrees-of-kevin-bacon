@@ -1,10 +1,11 @@
 /**
  * Christopher Yeh
  * cyeh@ucsd.edu
- * A main driver to test run the firewall.
- * The firewall works by first parsing known malicious links,
- * Then parsing a second file with links, outputting definitely
- * fine links to an output file. It sacrifices accuracy for space complexity.
+ * A main driver to test run a pathfinder.
+ * The pathfinder will find multiple paths from a given input file,
+ * depending on how many pairs of actors there are.
+ * It will output the paths, showing how the paths were found
+ * by the actors and movies along that path.
  */
 #include <iostream>
 #include <fstream>
@@ -15,8 +16,12 @@
 using namespace std;
 
 /**
- * @param argc only implemented for three arguments.
- * @param argv 1: bad urls file 2: urls file 3: output file.
+ * @param argc only implemented for four arguments.
+ * @param argv
+ *      1: tsv file with actors and movies starred in
+ *      2: u/w flag for unweighted/weighted paths respectfully
+ *      3: tsv file for pairs of actors to find shortest path
+ *      4: output file to write in.
  * @return 0 if success, 1 if invalid arguments.
  */
 int main(int argc, char** argv) {

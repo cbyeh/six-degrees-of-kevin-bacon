@@ -21,9 +21,9 @@ public:
     vector<ActorEdge> relationships;
     string actorName;
     unsigned int distance; // Distance from query node
-    bool isDone;
-    ActorNode* prevActor;
-    Movie* prevMovie;
+    bool isDone; // If node was visited in BFS during shortest path
+    ActorNode* prevActor; // Previous actor in shortest path
+    Movie* prevMovie; // Previous movie in shortest path
     ActorNode* parent; // Its parent for Disjoint Set
 
     /** Constructor. Initialize an ActorNode with empty edges and actor name */

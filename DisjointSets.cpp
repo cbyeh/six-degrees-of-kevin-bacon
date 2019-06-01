@@ -1,13 +1,12 @@
 /**
  * Christopher Yeh
  * cyeh@ucsd.edu
- * Implementation of an ActorEdge.
+ * Implementation of DisjointSets.
  */
 #include "DisjointSets.hpp"
 
-/** Constructor of the Actor Graph. */
+/** Constructor of the Disjoint Sets. */
 DisjointSets::DisjointSets(int numActors, ActorGraph* actorGraph) {
-    array = vector<ActorNode*>(numActors, (ActorNode*) nullptr);
     this->actorGraph = actorGraph;
     for (auto& actor : actorGraph->actors) {
         actor.second->parent = nullptr;

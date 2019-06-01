@@ -1,10 +1,7 @@
 /**
  * Christopher Yeh
  * cyeh@ucsd.edu
- * A main driver to test run the firewall.
- * The firewall works by first parsing known malicious links,
- * Then parsing a second file with links, outputting definitely
- * fine links to an output file. It sacrifices accuracy for space complexity.
+ * Header file representing an ActorGraph.
  */
 #ifndef ACTORGRAPH_HPP
 #define ACTORGRAPH_HPP
@@ -22,10 +19,8 @@
 
 using namespace std;
 
-/** Defines a Graph for our actors and their relationships by movie..
- * Defined by a lists of unique actors, movies, and stars of the movies.
- * actors:
- * movies:
+/** Defines a Graph for our actors and their relationships by movie.
+ * Defined by a lists of unique actors, movies, and their relationships.
  */
 class ActorGraph {
 
@@ -35,9 +30,9 @@ private:
 
 public:
 
-    unordered_map<string, ActorNode*> actors;
-    unordered_map<string, Movie*> movies;
-    vector<ActorEdge> edges;
+    unordered_map<string, ActorNode*> actors; // Unique actors
+    unordered_map<string, Movie*> movies; // Unique movies
+    vector<ActorEdge> edges; // Relationships of actors
 
     /** Constructor of the Actor Graph. */
     ActorGraph();

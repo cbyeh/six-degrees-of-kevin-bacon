@@ -1,10 +1,12 @@
 /**
  * Christopher Yeh
  * cyeh@ucsd.edu
- * A main driver to test run the firewall.
- * The firewall works by first parsing known malicious links,
- * Then parsing a second file with links, outputting definitely
- * fine links to an output file. It sacrifices accuracy for space complexity.
+ * A main driver to test run the movietraveler.
+ * Given a tsv file to create the graph, it works by creating
+ * a minimum spanning tree of that graph, effectively connecting
+ * all the actors by newest movies first.
+ * It will output each actor visited, and the movie from that
+ * actor to the another.
  */
 #include <iostream>
 #include <fstream>
@@ -17,8 +19,10 @@
 using namespace std;
 
 /**
- * @param argc only implemented for three arguments.
- * @param argv 1: bad urls file 2: urls file 3: output file.
+ * @param argc only implemented for two arguments.
+ * @param argv
+ *      1: tsv file with actors and movies starred in
+ *      2: output file to write in.
  * @return 0 if success, 1 if invalid arguments.
  */
 int main(int argc, char** argv) {

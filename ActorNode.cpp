@@ -1,8 +1,8 @@
 /**
  * Christopher Yeh
  * cyeh@ucsd.edu
- * Implementation of a HCNode.
- * Empty as it is implemented in the header.
+ * Implementation of an ActorNode.
+ * Initializes one with the actor's name.
  */
 #include "ActorNode.hpp"
 

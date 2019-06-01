@@ -1,7 +1,7 @@
 /**
  * Christopher Yeh
  * cyeh@ucsd.edu
- * Header file representing a DisjointSet.
+ * Header file representing DisjointSets.
  */
 #ifndef DISJOINTSET_HPP
 #define DISJOINTSET_HPP
@@ -13,17 +13,13 @@
 
 using namespace std;
 
+/** Defines a series of Disjoint Sets .
+ * Defined by parent pointers of actors in an Actor Graph. */
 class DisjointSets {
-
-    struct UpTree {
-        ActorNode* head;
-        set<ActorNode*> nodes;
-    };
 
 public:
 
-    vector<ActorNode*> array;
-    ActorGraph* actorGraph;
+    ActorGraph* actorGraph; // Graph to be split into sets
 
     /** Constructor of the Actor Graph. */
     DisjointSets(int numActors, ActorGraph* actorGraph);
