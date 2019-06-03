@@ -28,7 +28,6 @@ be in different connected components. Explain how you can find the number of
 connected components in an undirected graph. You should also include the
 runtime of your algorithm.
 
-
     For every vertex, if it is not visited, call a function BFS(vertex v), and
     increment a counter.
     In BFS(vertex v), we mark v as visited, and for every vertex connected to v,
