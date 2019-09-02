@@ -6,7 +6,7 @@
  
 It was claimed that anyone involved in the Hollywood film industry can be 
 linked through their film roles to Kevin Bacon within six steps. You are 
-suspicious of such claim and decide to verify it using the given dataset. 
+suspicious of such claim and decide to verify it using the given 2019 dataset. 
  
 1. Before you start to verify the claim, you first notice that it is not 
 possible for this claim to be true if the actor graph is not even connected.
@@ -50,4 +50,5 @@ algorithm.
     Return true after every vertex is marked as done and we finished running.
     The time complexity is O(|V| + |E|)², the complexity of BFS,
     where |V| is the number of vertices and |E| is the number of edges.
-    It is squared because we performing a BFS on every vertex.
+    It is squared because we are performing a BFS on every vertex.
+    
